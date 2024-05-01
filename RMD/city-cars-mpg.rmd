@@ -1,0 +1,30 @@
+```{r}
+library(ggplot2)
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = hwy, y = cty))
+```
+
+
+4. Apart from the US, most countries use fuel consumption (fuel consumed
+over fixed distance) rather than fuel economy (distance traveled with fixed
+amount of fuel). How could you convert `cty` and `hwy` into the European
+standard of liter/100 km? Introduce corresponding variables into the `mpg` data.
+# Change the variable names to `l/100km` and `km/l` respectively.
+5.  Are cars in 2008 more fuel efficient than cars in 1999? Expand on your answer in (3) for a visual approach to this question. Note: you are not asked to find numeric answers. Instead, interpret plots.
+# Cars in 2008 do appear to be more fuel efficient as they are more spread out in the graph. The cars in 1999 are more clustered together in the graph. This means that the cars in 1999 are less fuel efficient than the cars in 2008.
+6. Use the `ggplot2` package to create  side-by-side boxplots of `cty` by `class`. Describe the relationship in 2-3 sentences.
+```{r}
+ggplot(data = mpg) +
+  geom_boxplot(mapping = aes(x = class, y = cty))
+```
+# The relationship between cty and class is that the cars in the compact class have the lowest median cty, the cars in the subcompact class have the second lowest median cty, the cars in the midsize class have the third lowest median cty, the cars in the minivan class have the fourth lowest median cty, the cars in the 2seater class have the fifth lowest median cty, the cars in the suv class have the sixth lowest median cty, and the cars in the pickup class have the highest median cty.
+
+7.
+Change the label for the y-axis to 'city miles per gallon' (see ```?ylab```).
+```{r}
+ggplot(data = mpg) +
+  geom_boxplot(mapping = aes(x = class, y = cty)) +
+  ylab("city miles per gallon") +
+  xlab("class")
+```
+

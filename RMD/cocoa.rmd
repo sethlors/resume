@@ -1,0 +1,36 @@
+# Reading the data and setting up ggplot library
+```{r}
+library(ggplot2)
+choco = read.csv("https://ds202-at-isu.github.io/labs/data/choco.csv")
+head(choco)
+```
+What is the overall number of chocolate bars rated?
+There were 1852 chocolate bars rated
+```{r}
+nrow(choco)
+```
+How does the number of ratings depend on the year?
+```{r}
+ggplot(choco, aes(x=Review.Date)) + geom_bar()
+```
+How are ratings distributed?
+Answer: The ratings are distributed normally with a mean of 3.2 and a standard deviation of 0.5. There are no outliers.
+```{r}
+ggplot(choco, aes(x=Rating)) + geom_histogram()
+```
+Do ratings depend on the cocoa percentage of a chocolate bar?
+Yes, the higher the cocoa percentage, the higher the rating.
+```{r}
+ggplot(choco, aes(x=Cocoa.Pct, y=Rating)) + geom_point()
+```
+The ratings are similar across the three locations, with the mean rating being 3.2 for all three locations.
+```{r}
+ggplot(choco, aes(x=Company.Location, y=Rating)) + geom_boxplot()
+```
+
+Conclusions.
+Answer: The higher the cocoa percentage, the higher the rating. The higher the cocoa percentage, the more likely the bean type is to be "Trinitario" or "Criollo". The lower the cocoa percentage, the more likely the bean type is to be "Forastero".
+
+```{r}
+ggplot(choco, aes(x=Cocoa.Pct, y=Rating, color=Bean.Type)) + geom_point()
+```

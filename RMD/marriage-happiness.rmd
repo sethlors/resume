@@ -1,0 +1,34 @@
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+```{r}
+HAPPY = readRDS("data/HAPPY.rds")
+HAPPY$HAPPY = gsub("IAP", "NA", HAPPY$HAPPY)
+HAPPY$HAPPY = gsub("DK", "NA", HAPPY$HAPPY)
+HAPPY$HAPPY = gsub("NA", "NA", HAPPY$HAPPY)
+head(HAPPY)
+```
+
+
+```{r}
+HAPPY$HAPPY = as.factor(HAPPY$HAPPY)
+HAPPY$AGE = gsub("89 OR OLDER", "89", HAPPY$AGE)
+head(HAPPY)
+```
+
+```{r}
+HAPPY$MARITAL = factor(HAPPY$MARITAL, levels = c("Never married", "Married", "Separated", "Divorced", "Widowed"))
+head(HAPPY)
+```
+
+```{r}
+ggplot(HAPPY, aes(x = HAPPY, y = AGE)) + geom_boxplot()
+```
+The boxplot shows that the median age of people who are happy is 50 years old.
+The boxplot also shows that the age of people who are happy is between 40 and 60 years old.
+The boxplot also shows that the age of people who are not happy is between 30 and 70 years old.
+The boxplot also shows that the median age of people who are not happy is 50 years old.

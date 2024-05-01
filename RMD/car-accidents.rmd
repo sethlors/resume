@@ -1,0 +1,55 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+accident = read.csv("https://raw.githubusercontent.com/yumouqiu/DS202-Spring2023/main/Practice/data/fars2016/accident.csv")
+person = read.csv("https://raw.githubusercontent.com/yumouqiu/DS202-Spring2023/main/Practice/data/fars2016/person.csv")
+vehicle = read.csv("https://raw.githubusercontent.com/yumouqiu/DS202-Spring2023/main/Practice/data/fars2016/vehicle.csv")
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+
+### Part 1
+#### Are there some days of the week where more accidents happen than on others (use variable DAY_WEEK)?
+Accidents happen every day of the week, but the most occur on Saturdays, followed by Fridays. The least amount of
+accidents are on Tuesdays.
+```{r}
+accident %>% group_by(DAY_WEEK) %>% count() %>% arrange(desc(n))
+```
+
+
+#### What time of day do accidents happen (use variable HOUR)?
+The most number of accidents are at night. The most amount of accidents occur at 6pm.
+```{r}
+accident %>% group_by(HOUR) %>% count() %>% arrange(desc(n))
+```
+
+#### What is the number of accidents with at least one drunk driver (use variable DRUNK_DR)?
+There are 8720 accidents with at least one drunk driver.
+```{r}
+sum(accident$DRUNK_DR >= 1)
+```
+
+### Part 2: Connecting data
+#### Connect to the person table. Identify drivers (PER_TYP == 1, see fars manual) and subset on them.
+```{r}
+person1 = person %>% filter(PER_TYP == 1)
+```
+#### Join accident and driver table (work out which variable(s) to use)
+```{r}
+accident.driver = left_join(person1, accident, by = c("ST_CASE", "HOUR"))
+```
+#### Tally the number of accidents by day of the week (DAY_WEEK), hour of the day(HOUR) and gender(SEX). Visualize the results!
+```{r}
+accident.driver <- accident.driver %>% filter(HOUR != 99)
+accident.driver <- accident.driver %>% group_by(DAY_WEEK, HOUR, SEX) %>% summarise(numAcc = n())
+accident.driver %>% ggplot(aes(x=factor(DAY_WEEK), fill=factor(SEX))) + geom_bar()
+accident.driver %>% ggplot(aes(x=factor(HOUR), fill=factor(SEX))) + geom_bar()
+accident.driver %>% ggplot(aes(x=factor(SEX))) + geom_bar()
+```

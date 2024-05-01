@@ -1,0 +1,90 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, message = FALSE}
+A = read.csv("Iowa_Liquor_Stores.csv")
+library(tidyverse)
+
+dim(A)
+
+A = A %>% filter(State == "IA")
+
+length(unique(A$State))
+
+length(unique(A$City))
+
+A$Inactive = ifelse(A$Store.Status == "I", TRUE, FALSE)
+
+A = A %>% group_by(City) %>% summarise(Num = n(), Inactive = sum(A$Inactive)/Num)
+
+A = A %>% arrange(desc(Num))
+print(A, 10)
+```
+
+```{r, message = FALSE}
+B = A %>% filter(Inactive == FALSE) %>% group_by(City) %>% summarise(Num = n())
+
+B = A %>% filter(Num >= 40)
+
+B$City = factor(B$City, levels = B$City[order(B$Num, decreasing = TRUE)])
+
+library(ggplot2)
+head(B)
+ggplot(B, aes(x = City, y = Num)) + geom_bar(stat = "identity") + coord_flip()
+```
+
+
+
+```{r, message = FALSE}
+C = read.csv("Iowa_Liquor_Stores.csv")
+
+C = C %>% filter(State == "IA" & Store.Status == "A")
+C$company = ifelse(C$Name %in% c("HY-VEE INC", "WAL-MART STORES INC", "MARTIN'S SUPER MARKETS INC", "KUM & GO LC"), C$Name, "other")
+
+C = C %>% separate(Name, into = c("Name1", "Name2"), sep = " ")
+
+new_data = C %>% filter(company %in% c("HY-VEE INC", "WAL-MART STORES INC", "MARTIN'S SUPER MARKETS INC", "KUM & GO LC", "other"))
+new_data$company = factor(new_data$company, levels = c("HY-VEE INC", "WAL-MART STORES INC", "MARTIN'S SUPER MARKETS INC", "KUM & GO LC", "other"))
+
+ggplot(new_data, aes(x = City, y = Num, fill = company)) + geom_bar(stat = "identity", position = "dodge") + coord_flip()
+head(C)
+```
+
+
+```{r, message = FALSE}
+# place the code for your answer here
+D = read.csv("Iowa_Liquor_Stores.csv")
+D = D %>% filter(State == "IA" & Store.Status == "A")
+D$company = ifelse(D$Name %in% c("HY-VEE INC", "WAL-MART STORES INC", "MARTIN'S SUPER MARKETS INC", "KUM & GO LC"), D$Name, "other")
+
+D.location1 = separate(Store.Address, into = c("Address", "Location"), sep = "\n\\(")
+D.location2 = D.location1 %>% separate(Location, into = c("Latitude", "Longitude"), sep = ",") %>% select(-Address)
+D.location = D.location2 %>% separate(Longitude, into = c("Longitude", "drop"), sep = "\\)") %>% select(-drop)
+D.location$Latitude = as.numeric(A.location$Latitude)
+D.location$Longitude = as.numeric(A.location$Longitude)
+ggplot(A.location, aes(x = Longitude, y = Latitude, color = company)) + geom_point()
+```
+
+
+
+```{r, message = FALSE}
+story_county_data = read.csv("Story_County_Liquor_Sales_New.csv")
+head(story_county_data)
+
+story_county_data$Volume.Sold..Liters. = as.numeric(as.character(story_county_data$Volume.Sold..Liters.))
+
+story_county_data$City = as.character(story_county_data$City)
+story_county_data = story_county_data %>% filter(City == "Ames")
+head(story_county_data)
+
+story_county_data$Date = as.Date(story_county_data$Date)
+story_county_data$Year = year(story_county_data$Date)
+story_county_data$Month = month(story_county_data$Date)
+story_county_data$Day = day(story_county_data$Date)
+
+story_county_data = story_county_data %>% group_by(story_county_data$year, story_county_data$month) %>% summarise(Volume.Sold..Gallons. = sum(Volume.Sold..Gallons.), Sale..Dollars. = sum(Sale..Dollars.))
+
+ggplot(story_county_data, aes(x = month, y = Sale..Dollars., color = year)) + geom_point()
+```
